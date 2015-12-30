@@ -17,16 +17,30 @@ dependencies:
 ```crystal
 require "completion"
 
-# [detected program] <action> <remote> <suboption>
+# [detected program] <action> <user> <remote>
 
-# You should define the pattern
-completion :action, :suboption do |comp|
+completion :action, :user, :remote do |comp|
 
-  # The first parameter will be one of init, build, deps, help, version
-  comp.reply :action, ["init", "build", "deps", "help", "version"]
+  # When Program requested :action, reply the availables.
+  comp.on(:action) do
+    comp.reply ["pull", "push"]
+  end
 
-  # Second one is one of --release or --development
-  comp.reply :suboption, ["--release", "--development"]
+  # When Program requested :user, reply the availables.
+  comp.on(:user) do
+    comp.reply ["f", "sdogruyol", "askn"]
+  end
+
+  # When Program requested :remote, reply the availables with defined variables.
+  comp.on(:remote) do
+    comp.reply ["github/#{comp.values[:user]}", "bitbucket/#{comp.values[:user]}"]
+  end
+
+  # When all parameters finished, reply always...
+  # It is `Dir.entries Dir.current` by default.
+  comp.end do
+    comp.reply ["--force"]
+  end
 end
 ```
 
@@ -44,30 +58,64 @@ completion "myprogram", :action, :remote, :suboption do |comp|
 end
 ```
 
-### Last Word and Whole Line
+### Defined Values, Last Word and Whole Line
 
 The first parameter of the block you give has `last_word`, `line` and `fragment` parameters. So you can make
 your parameters more dynamic.
 
 ```crystal
-completion :action, :user, :remote do |comp|
-  comp.reply :action, [:push, :pull]
-  comp.reply :user, ["f", "crystal"]
-  comp.reply :remote, ["github/#{comp.last_word}/", "bitbucket/#{comp.last_word}/"]
+completion :searchengine, :url do |comp|
+
+  comp.on(:searchengine) do
+    comp.reply ["google", "bing"]
+  end
+
+  comp.on(:url) do
+    comp.reply ["#{comp.values[:searchengine]}.com/search", "#{comp.values[:searchengine]}.com/images"]
+  end
 end
 ```
 
 This will run as:
 
 ```
-$ completion
-pull  push
+$ completion<tab>
+google bing
 
-$ completion pull
-crystal  f
+$ completion goog<tab>
+google
 
-$ completion pull crystal
-bitbucket/crystal  github/crystal
+$ completion google <tab>
+google.com/search google.com/images
+```
+
+### End of Arguments
+
+You can define what to show when arguments are finished:
+
+```crystal
+completion :first do |comp|
+  comp.on(:first) do
+    comp.reply ["any", "option"]
+  end
+  comp.end do
+    comp.reply ["--force", "--prune"]
+  end
+end
+```
+
+### Concatting Replies
+
+You can reply more than one time. It will concat all of these.
+
+```crystal
+completion :first do |comp|
+  comp.on(:first) do
+    comp.reply ["any", "option"]
+    comp.reply ["other", "awesome"]
+    comp.reply ["options", "to", "select"]
+  end
+end
 ```
 
 ## Installation

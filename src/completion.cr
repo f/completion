@@ -8,12 +8,16 @@ module Completion
     getter last_word
     getter line
     getter fragment
+    getter values
 
     def initialize(@program)
       @fragments = [] of Symbol
-      @listeners = {} of Symbol => Array(String|Symbol|Nil)
+      @values = {} of String|Symbol => String|Nil
+      @end_of_arguments = ->{ reply Dir.entries Dir.current }
+      @listeners = {} of Symbol => -> Void
       @install = ARGV.includes? "--completion"
       @compgen = ARGV.includes? "--compgen"
+      @line = ""
 
       if @compgen
         @comp_starts_at = ARGV.index "--compgen"
@@ -33,8 +37,16 @@ module Completion
     def set_fragments(@fragments)
     end
 
-    def reply(fragment, reply)
+    def on(fragment, &reply)
       @listeners[fragment] = reply
+    end
+
+    def end(&reply)
+      @end_of_arguments = reply
+    end
+
+    def reply(results)
+      puts results.join "\n"
     end
 
     def init
@@ -42,10 +54,14 @@ module Completion
         fragment = @fragment as Int32
         begin
           completions = @listeners[@fragments[fragment-1]]
+
+          @line.split(" ").each_index do |i|
+            @values[@fragments[i-1]] = @line.split(" ").at(i)
+          end
         rescue
-          completions = Dir.entries Dir.current
+          completions = @end_of_arguments
         end
-        puts completions.join "\n"
+        completions.call
       end
     end
 
