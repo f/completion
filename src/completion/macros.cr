@@ -13,3 +13,7 @@ macro completion(program, *fragments, &block)
   {{block.body}}
   %completion.init
 end
+
+macro completion_option(parser)
+  {{parser}}.on("--completion", "Autocompletion script to enable autocompletion.") {}
+end

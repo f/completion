@@ -118,6 +118,26 @@ completion :first do |comp|
 end
 ```
 
+## Using with `OptionParser`
+
+Usage of Completion with `OptionParser` may cause problems since `--completion` flag
+is not defined in your `OptionParser` instance.
+
+To fix it, simply use `completion_option` macro.
+
+```crystal
+OptionParser.parse! do |parser|
+
+  # Please add this macro to the OptionParser block.
+  completion_option parser
+
+  parser.banner = "Usage: salute [arguments]"
+  parser.on("-u", "--upcase", "Upcases the sallute") { }
+  parser.on("-t NAME", "--to=NAME", "Specifies the name to salute") { }
+  parser.on("-h", "--help", "Show this help") { puts parser }
+end
+```
+
 ## Installation
 
 *(You should add these instructions to your project's README)*
