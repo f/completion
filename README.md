@@ -159,6 +159,72 @@ yourapp --completion >> ~/.yourapp.completion.sh
 echo 'source ~/.yourapp.completion.sh' >> .bash_profile
 ```
 
+# Examples
+
+Examples are here to show you how to make it more functional.
+
+## Branched Autocompletion
+
+This is how you can branch options and suboptions by using `values` parameter.
+
+```crystal
+completion :action, :subaction, :subsubaction do |comp|
+  comp.on(:action) do
+    comp.reply ["pull", "log", "commit", "remote"]
+  end
+
+  comp.on(:subaction) do
+    case comp.values[:action]
+      when "pull"
+        comp.reply ["origin", "upstream"]
+
+      when "log"
+        comp.reply ["HEAD", "master", "develop"]
+
+      when "commit"
+        comp.reply ["--amend", "-m", "-am"]
+    end
+  end
+
+  comp.on(:subsubaction) do
+    case comp.values[:subaction]
+      when "origin"
+        comp.reply ["origin/master", "origin/upstream", "origin/patch"]
+
+      when "HEAD"
+        comp.reply ["~1", "~2", "~3"]
+    end
+  end
+end
+```
+
+## Remote Autocompletion
+
+You can make a remote autocompletion using `HTTP::Client`.
+
+```crystal
+require "json"
+require "http/client"
+
+completion :repos do |comp|
+  comp.on(:repos) do
+    request = HTTP::Client.get "https://api.github.com/users/f/repos"
+    repos = JSON.parse(request.body)
+    repo_names = [] of JSON::Any
+    repos.each {|repo| repo_names << repo["name"] }
+
+    comp.reply repo_names
+  end
+end
+```
+
+This will run as:
+
+```
+$ mygit c<tab>
+cards     coffeepad     completion    cryload     crystal-kemal-todo-list     crystal-weekly
+```
+
 ## TODO
 
  - [ ] Add ZSH Support
