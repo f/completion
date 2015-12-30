@@ -155,8 +155,8 @@ $ myapp --help --<tab>
 *(You should add these instructions to your project's README)*
 
 ```
-yourapp --completion >> ~/.yourapp.completion.sh
-echo 'source ~/.yourapp.completion.sh' >> .bash_profile
+# Add this line to your .bashrc file.
+source <(yourapp --completion)
 ```
 
 # Examples
