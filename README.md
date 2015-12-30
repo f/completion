@@ -12,6 +12,8 @@ dependencies:
     github: f/completion
 ```
 
+![Completion](http://i.imgur.com/UVh97ZO.gif)
+
 ## Usage
 
 ```crystal
