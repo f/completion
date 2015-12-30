@@ -16,6 +16,31 @@ dependencies:
 
 ## Usage
 
+### 1 Minute Start
+
+First, create a file with simple autocompletion logic.
+```crystal
+# hello.cr
+require "completion"
+
+completion :where do |comp|
+  comp.on(:where) do
+    comp.reply ["world", "mars", "pluton"]
+  end
+end
+```
+
+Build and try:
+
+```bash
+crystal build hello.cr
+source <(./hello --completion)
+
+./hello<tab><tab>
+world   mars   pluton
+```
+
+### Overview
 ```crystal
 require "completion"
 
@@ -156,7 +181,7 @@ $ myapp --help --<tab>
 
 *(You should add these instructions to your project's README)*
 
-```
+```bash
 # Add this line to your .bashrc file.
 source <(yourapp --completion)
 ```
