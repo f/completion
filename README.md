@@ -1,4 +1,4 @@
-# Shell Auto-Completion Helper for Crystal
+# Easy Command Line Autocompletion Helper
 
 Completion is a Shell Completion Helper built on Crystal. It allows you to have completion muscle for your CLI apps.
 
