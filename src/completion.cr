@@ -30,7 +30,10 @@ module Completion
       end
 
       if @install
-        puts installer
+        unless @compgen
+          puts installer
+        end
+        exit 0
       end
     end
 
@@ -62,6 +65,7 @@ module Completion
           completions = @end_of_arguments
         end
         completions.call
+        exit 0
       end
     end
 

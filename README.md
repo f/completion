@@ -79,13 +79,13 @@ end
 This will run as:
 
 ```
-$ completion<tab>
+$ myapp<tab>
 google bing
 
-$ completion goog<tab>
+$ myapp goog<tab>
 google
 
-$ completion google <tab>
+$ myapp google <tab>
 google.com/search google.com/images
 ```
 
@@ -118,24 +118,36 @@ completion :first do |comp|
 end
 ```
 
-## Using with `OptionParser`
+## Integrating into `OptionParser`
 
-Usage of Completion with `OptionParser` may cause problems since `--completion` flag
-is not defined in your `OptionParser` instance.
+Completion can parse `OptionParser` arguments and it's very easy to integrate with.
 
-To fix it, simply use `completion_option` macro.
+Simply use `complete_with` macro with the instance of `OptionParser`. It will automatically
+parse all the flags and add them to the suggestion list.
 
 ```crystal
 OptionParser.parse! do |parser|
-
-  # Please add this macro to the OptionParser block.
-  completion_option parser
-
   parser.banner = "Usage: salute [arguments]"
   parser.on("-u", "--upcase", "Upcases the sallute") { }
   parser.on("-t NAME", "--to=NAME", "Specifies the name to salute") { }
   parser.on("-h", "--help", "Show this help") { puts parser }
+
+  # Just add this macro to the OptionParser block.
+  complete_with parser
 end
+```
+
+It will run as:
+
+```
+$ myapp<tab>
+--help    --to      --upcase  -h        -t        -u
+
+$ myapp --<tab>
+--help --to --upcase
+
+$ myapp --help --<tab>
+--help --to --upcase
 ```
 
 ## Installation
