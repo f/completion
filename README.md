@@ -34,11 +34,18 @@ Build and try:
 
 ```bash
 crystal build hello.cr
-source <(./hello --completion)
+eval "$(./hello --completion --development)"
 
 ./hello<tab><tab>
 world   mars   pluton
 ```
+
+> **Note:** `--development` flag enables autocompletion for relative (`./hello`) completion.
+> While developing your application and testing your autocompletion feature, please
+> use `--development` flag beside `--completion` flag.
+>
+> When you are available to use your app globally (e.g. via Homebrew) you should
+> make your users to run `eval "$(yourapp --completion)"` command.
 
 ### Overview
 ```crystal
@@ -183,12 +190,19 @@ $ myapp --help --<tab>
 
 ```bash
 # Add this line to your .bashrc file.
-source <(yourapp --completion)
+eval "$(yourapp --completion)"
 ```
 
 # Examples
 
 Examples are here to show you how to make it more functional.
+
+## Real World Examples
+
+| Project Name | Talk is cheap, show me the code |
+| ------------ | ------------------------------- |
+| [tlcr](https://github.com/porras/tlcr) | [src/tlcr/completion.cr](https://github.com/porras/tlcr/blob/master/src/tlcr/completion.cr#L28-L39) |
+| [cryload](https://github.com/sdogruyol/cryload) | [src/cryload/cli.cr](https://github.com/sdogruyol/cryload/blob/master/src/cryload/cli.cr#L36) |
 
 ## Branched Autocompletion
 
