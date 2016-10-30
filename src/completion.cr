@@ -5,12 +5,18 @@ module Completion
 
   class Completer
 
+    @install : Bool
+    @compgen : Bool
+    @comp_starts_at : Int32?
+    @fragment : Int32?
+    @last_word : String?
+
     getter last_word
     getter line
     getter fragment
     getter values
 
-    def initialize(@program)
+    def initialize(@program : String)
       @fragments = [] of Symbol
       @values = {} of String|Symbol => String|Nil
       @end_of_arguments = ->{ reply Dir.entries Dir.current }
@@ -37,7 +43,7 @@ module Completion
       end
     end
 
-    def set_fragments(@fragments)
+    def set_fragments(@fragments = [] of Symbol)
     end
 
     def on(fragment, &reply)
