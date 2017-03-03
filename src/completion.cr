@@ -11,21 +11,22 @@ module Completion
     getter values
 
     def initialize(@program)
+      cli_args = ARGV
       @fragments = [] of Symbol
       @values = {} of String|Symbol => String|Nil
       @end_of_arguments = ->{ reply Dir.entries Dir.current }
       @listeners = {} of Symbol => -> Void
-      @install = ARGV.includes? "--completion"
-      @compgen = ARGV.includes? "__compgen__"
+      @install = cli_args.includes? "--completion"
+      @compgen = cli_args.includes? "__compgen__"
       @line = ""
 
       if @compgen
-        @comp_starts_at = ARGV.index "__compgen__"
+        @comp_starts_at = cli_args.index "__compgen__"
         if @comp_starts_at
           starts = Int32.cast @comp_starts_at
-          @fragment = ARGV[starts + 1].to_i
-          @last_word = ARGV[starts + 2]
-          @line = ARGV[starts + 3]
+          @fragment = cli_args[starts + 1].to_i
+          @last_word = cli_args[starts + 2]
+          @line = cli_args[starts + 3]
         end
       end
 
@@ -54,7 +55,7 @@ module Completion
 
     def init
       if @compgen
-        fragment = @fragment as Int32
+        fragment = @fragment.as(Int32)
         begin
           completions = @listeners[@fragments[fragment-1]]
 
